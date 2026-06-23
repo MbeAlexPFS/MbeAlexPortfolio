@@ -58,9 +58,16 @@
                                 </span>
                             </template>
                             <template x-if="!thumbStatus || thumbStatus === 'failed'">
-                                <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}" class="inline">
+                                <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}"
+                                      class="inline" x-data="{ submitting: false }"
+                                      x-on:submit="submitting = true">
                                     @csrf
-                                    <button class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium">Miniature</button>
+                                    <button type="submit" :disabled="submitting"
+                                            :class="submitting && 'opacity-50 cursor-not-allowed'"
+                                            class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium">
+                                        <span x-show="!submitting">Miniature</span>
+                                        <span x-show="submitting">Génération...</span>
+                                    </button>
                                 </form>
                             </template>
                             <template x-if="thumbStatus === 'completed'">
@@ -68,18 +75,27 @@
                             </template>
                             <template x-if="thumbStatus === 'completed'">
                                 <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}"
-                                      class="inline"
-                                      x-on:submit="if(confirm('Remplacer la miniature existante ?')) $el.querySelector('button[type=submit]').disabled = true; else $event.preventDefault()">
+                                      class="inline" x-data="{ submitting: false }"
+                                      x-on:submit="if(confirm('Remplacer la miniature existante ?')) submitting = true; else $event.preventDefault()">
                                     @csrf
-                                    <button type="submit" class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium">Remplacer</button>
+                                    <button type="submit" :disabled="submitting"
+                                            :class="submitting && 'opacity-50 cursor-not-allowed'"
+                                            class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium">
+                                        <span x-show="!submitting">Remplacer</span>
+                                        <span x-show="submitting">Génération...</span>
+                                    </button>
                                 </form>
                             </template>
                         @endif
                         <a href="{{ route('admin.projects.edit', $project) }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Modifier</a>
-                        <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" x-on:submit="if(confirm('Supprimer ce projet ?')) $el.querySelector('button[type=submit]').disabled = true; else $event.preventDefault()">
+                        <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
+                              class="inline" x-data="{ submitting: false }"
+                              x-on:submit="if(confirm('Supprimer ce projet ?')) submitting = true; else $event.preventDefault()">
                             @csrf
                             @method('DELETE')
-                            <button class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
+                            <button type="submit" :disabled="submitting"
+                                    :class="submitting && 'opacity-50 cursor-not-allowed'"
+                                    class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
                         </form>
                     </div>
                 </div>

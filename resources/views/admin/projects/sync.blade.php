@@ -11,7 +11,9 @@
         @if(empty($candidates))
             <p class="mt-10 text-center text-gray-400 dark:text-dark-muted py-10">Aucun dépôt HTML statique trouvé sur GitHub.</p>
         @else
-            <form method="POST" action="{{ route('admin.projects.sync-github.confirm') }}" class="mt-8" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+            <form method="POST" action="{{ route('admin.projects.sync-github.confirm') }}" class="mt-8"
+                  x-data="{ submitting: false }"
+                  x-on:submit="submitting = true">
                 @csrf
 
                 <div class="space-y-3">
@@ -44,8 +46,11 @@
                 </div>
 
                 <div class="mt-8 flex items-center gap-3">
-                    <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
-                        Synchroniser la sélection
+                    <button type="submit" :disabled="submitting"
+                            :class="submitting && 'opacity-50 cursor-not-allowed'"
+                            class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+                        <span x-show="!submitting">Synchroniser la sélection</span>
+                        <span x-show="submitting">Synchronisation...</span>
                     </button>
                     <p class="text-sm text-gray-400 dark:text-dark-muted">{{ count($candidates) }} dépôt(s) HTML statique trouvé(s)</p>
                 </div>
