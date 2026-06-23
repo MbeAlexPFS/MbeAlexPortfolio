@@ -10,10 +10,10 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
+        User::firstOrCreate(['email' => 'admin@gmail.com'], [
             'pseudo' => 'MbeAlex',
-            'email' => 'admin@mbealexportfolio.com',
-            'password' => Hash::make('89218921mbe007007portfolio@@'),
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('password'),
             'role' => 'admin',
             'is_verified' => true,
             'is_active' => true,
