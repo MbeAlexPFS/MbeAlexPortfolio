@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\GenerateThumbnailJob;
-use App\Jobs\SyncGitHubJob;
 use App\Models\JobProgress;
 use App\Models\Project;
 use App\Models\Skill;
 use App\Models\Tag;
 use App\Services\GitHubService;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProjectController extends Controller
@@ -221,10 +221,147 @@ class ProjectController extends Controller
             'reference_type' => Project::class,
             'reference_id' => 0,
             'total' => count($selected),
-            'status' => 'pending',
+            'status' => 'processing',
         ]);
 
-        SyncGitHubJob::dispatch($progress, $selected);
+        $selected = array_filter($selected, fn ($a) => ! empty($a['import']));
+        $total = count($selected);
+        $progress->update(['total' => $total]);
+
+        if ($total > 0) {
+            $github = app(GitHubService::class);
+            $repos = collect($github->fetchPublicRepos());
+
+            $candidates = [];
+            foreach ($selected as $repoId => $action) {
+                $repo = $repos->firstWhere('id', (int) $repoId);
+                if ($repo) {
+                    $candidates[(int) $repoId] = [
+                        'repo' => $repo,
+                        'replace' => ! empty($action['replace']),
+                    ];
+                }
+            }
+
+            $fullNames = array_values(array_map(fn ($c) => $c['repo']['full_name'], $candidates));
+            $repoIds = array_keys($candidates);
+
+            $contentsResponses = Http::pool(fn (Pool $pool) => array_map(
+                fn ($name) => $pool->withHeaders(['Accept' => 'application/vnd.github.v3+json'])
+                    ->asJson()
+                    ->get("https://api.github.com/repos/{$name}/contents"),
+                $fullNames,
+            ));
+
+            $valid = [];
+            foreach ($repoIds as $i => $repoId) {
+                $response = $contentsResponses[$i] ?? null;
+
+                if (! $response || $response->failed()) {
+                    $progress->increment('completed');
+
+                    continue;
+                }
+
+                $files = $response->json();
+                $hasIndex = false;
+                $hasPhp = false;
+
+                foreach ($files as $file) {
+                    if ($file['name'] === 'index.html') {
+                        $hasIndex = true;
+                    }
+                    if (str_ends_with($file['name'], '.php') || ($file['type'] === 'dir' && in_array($file['name'], ['vendor', 'node_modules']))) {
+                        $hasPhp = true;
+                    }
+                }
+
+                if ($hasIndex && ! $hasPhp) {
+                    $valid[] = $candidates[$repoId];
+                } else {
+                    $progress->increment('completed');
+                }
+            }
+
+            $readmePool = [];
+            foreach ($valid as $item) {
+                if (empty($item['repo']['description'])) {
+                    $readmePool[] = $item['repo']['full_name'];
+                }
+            }
+
+            $readmeResponses = [];
+
+            if ($readmePool !== []) {
+                $readmeResponses = Http::pool(fn (Pool $pool) => array_map(
+                    fn ($name) => $pool->withHeaders(['Accept' => 'application/vnd.github.v3.raw'])
+                        ->get("https://api.github.com/repos/{$name}/readme"),
+                    $readmePool,
+                ));
+            }
+
+            $imported = 0;
+            $skipped = 0;
+            $readmeIdx = 0;
+
+            foreach ($valid as $item) {
+                $repo = $item['repo'];
+                $shouldReplace = $item['replace'];
+                $fullName = $repo['full_name'];
+                $repoId = $repo['id'];
+
+                $existing = Project::where('github_repo_id', $repoId)->first();
+
+                if ($existing && ! $shouldReplace) {
+                    $skipped++;
+                    $progress->increment('completed');
+
+                    continue;
+                }
+
+                $defaultBranch = $repo['default_branch'] ?? 'main';
+                $description = $repo['description'] ?? '';
+
+                if ($description === '') {
+                    $resp = $readmeResponses[$readmeIdx] ?? null;
+                    if ($resp && $resp->successful()) {
+                        $description = Str::limit($resp->body(), 300);
+                    }
+                    $readmeIdx++;
+                }
+
+                $data = [
+                    'title' => $repo['name'],
+                    'description' => $description,
+                    'type' => 'web_static',
+                    'github_url' => $repo['html_url'],
+                    'live_url' => 'https://htmlpreview.github.io/?https://github.com/'.$fullName.'/blob/'.$defaultBranch.'/index.html',
+                    'github_repo_id' => $repoId,
+                ];
+
+                if ($existing) {
+                    $existing->update($data);
+                } else {
+                    Project::create($data);
+                }
+
+                $imported++;
+                $progress->increment('completed');
+            }
+
+            $parts = [];
+            if ($imported > 0) {
+                $parts[] = "{$imported} synchronisé(s)";
+            }
+            if ($skipped > 0) {
+                $parts[] = "{$skipped} ignoré(s)";
+            }
+            $message = $parts ? implode(', ', $parts).'.' : 'Aucun traitement.';
+
+            $progress->update(['status' => 'completed', 'error' => $message]);
+        } else {
+            $progress->update(['status' => 'completed', 'error' => 'Aucun projet sélectionné.']);
+        }
 
         return to_route('admin.projects.sync-github.progress', $progress);
     }
@@ -260,11 +397,33 @@ class ProjectController extends Controller
             return back()->with('error', 'Une miniature est déjà en cours de génération.');
         }
 
-        $project->update(['thumbnail_status' => 'pending']);
+        $project->update(['thumbnail_status' => 'processing']);
 
-        GenerateThumbnailJob::dispatch($project);
+        $screenshotUrl = 'https://mini.s-shot.ru/1280x1024/PNG/1024/?'.urlencode($project->live_url);
 
-        return back()->with('success', 'Génération de la miniature lancée (quelques secondes).');
+        $response = Http::timeout(30)->get($screenshotUrl);
+
+        if ($response->failed()) {
+            $project->update(['thumbnail_status' => 'failed']);
+
+            return back()->with('error', 'Échec de la génération de la miniature.');
+        }
+
+        $filename = $project->id.'_thumbnail.png';
+
+        Storage::disk('public')->put('projects/'.$filename, $response->body());
+
+        if ($project->image_url && str_starts_with($project->image_url, '/storage/projects/')) {
+            $oldPath = str_replace('/storage/', '', $project->image_url);
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        $project->update([
+            'image_url' => Storage::url('projects/'.$filename),
+            'thumbnail_status' => 'completed',
+        ]);
+
+        return back()->with('success', 'Miniature générée avec succès.');
     }
 
     public function cancelThumbnail(Project $project): RedirectResponse

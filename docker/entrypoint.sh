@@ -11,8 +11,6 @@ php artisan storage:link --no-interaction 2>/dev/null || true
 
 php artisan migrate --force --no-interaction 2>/dev/null || true
 
-php artisan queue:work --sleep=3 --tries=3 > /dev/null 2>&1 &
-
 php-fpm -D
 
 exec apache2ctl -D FOREGROUND
