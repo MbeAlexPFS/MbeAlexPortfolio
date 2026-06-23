@@ -26,18 +26,16 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY --from=node:22-alpine /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:22-alpine /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
 
 WORKDIR /app
 
-COPY composer.json composer.lock package.json package-lock.json ./
+COPY composer.json composer.lock package.json bun.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
-RUN npm ci
+RUN bun install --frozen-lockfile
 
 COPY . .
-RUN npm run build && rm -rf node_modules
+RUN bun run build && rm -rf node_modules
 
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
