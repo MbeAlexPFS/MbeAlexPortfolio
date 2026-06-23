@@ -10,7 +10,7 @@ class NewsletterController extends Controller
 {
     public function unsubscribeArticles(User $user): RedirectResponse
     {
-        if (!URL::hasValidSignature(request())) {
+        if (! URL::hasValidSignature(request())) {
             abort(401);
         }
 
@@ -21,7 +21,7 @@ class NewsletterController extends Controller
 
     public function unsubscribePolls(User $user): RedirectResponse
     {
-        if (!URL::hasValidSignature(request())) {
+        if (! URL::hasValidSignature(request())) {
             abort(401);
         }
 

@@ -16,6 +16,18 @@ class CommentController extends Controller
             'content' => ['required', 'string', 'min:2', 'max:2000'],
         ]);
 
+        $existing = Comment::where('user_id', Auth::id())
+            ->where('article_id', $article->id)
+            ->first();
+
+        if ($existing) {
+            if ($existing->is_published) {
+                return back()->with('error', 'Vous avez déjà commenté cet article.');
+            }
+
+            return back()->with('error', 'Votre commentaire est en attente de validation.');
+        }
+
         Comment::create([
             'user_id' => Auth::id(),
             'article_id' => $article->id,

@@ -18,6 +18,9 @@
                 </h1>
                 <p class="mt-6 text-lg md:text-xl text-gray-500 dark:text-dark-muted leading-relaxed">
                     {{ $admin->bio ?? 'Je conçois des applications web modernes, performantes et élégantes. Spécialisé en Laravel, Vue.js et Tailwind CSS.' }}
+                    @if($admin->social_links && collect($admin->social_links)->firstWhere('platform', 'GitHub'))
+                        <span class="block mt-4 text-sm text-gray-400 dark:text-dark-muted">Les projets plus complexes sont directement sur <a href="{{ collect($admin->social_links)->firstWhere('platform', 'GitHub')['url'] }}" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:underline">GitHub</a>.</span>
+                    @endif
                 </p>
                 <div class="mt-6 flex flex-wrap gap-3">
                     @if($admin->social_links)
@@ -61,7 +64,80 @@
         </div>
     </section>
 
-    
+    {{-- Features --}}
+    <section class="bg-white dark:bg-dark-card py-20 scroll-reveal">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-dark-text">Fonctionnalités du site</h2>
+            <p class="mt-2 text-gray-500 dark:text-dark-muted">Tout ce que ce portfolio a à offrir.</p>
+            <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Portfolio</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Galerie de projets classés par type : sites web, design, affiches, logos, montages vidéo.</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Blog</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Articles avec commentaires, tags, et validation des échanges.</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Sondages</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Questionnaires interactifs avec choix unique, multiples, texte ou échelle.</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">IA intégrée</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Assistant virtuel alimenté par Gemini, Groq et OpenRouter pour répondre à vos questions.</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Connexion OAuth</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Inscription et connexion via Google, sans mot de passe.</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.981l7.5-4.039a2.25 2.25 0 012.134 0l7.5 4.039a2.25 2.25 0 011.183 1.98V19.5z"/></svg>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Newsletters</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Abonnez-vous pour recevoir les nouveaux articles et sondages par email.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Formations --}}
+    @if($formations->isNotEmpty())
+        <section class="py-20 scroll-reveal">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-dark-text">Formations</h2>
+                <p class="mt-2 text-gray-500 dark:text-dark-muted">Mon parcours académique et professionnel.</p>
+                <div class="mt-10 space-y-4">
+                    @foreach($formations as $formation)
+                        <div class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-dark-text">{{ $formation->name }}</h3>
+                                <p class="text-sm text-gray-500 dark:text-dark-muted mt-0.5">{{ $formation->institution }} &middot; {{ $formation->year }}</p>
+                            </div>
+                            <span class="text-xs {{ $formation->status === 'completed' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' }} px-3 py-1 rounded-full font-medium">
+                                {{ $formation->status === 'completed' ? 'Terminé' : 'En cours' }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 
     {{-- Skills --}}
     @if($skills->isNotEmpty())
@@ -100,7 +176,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-dark-text">Projets récents</h2>
-                        <p class="mt-2 text-gray-500 dark:text-dark-muted">Site web, design, logo, montage vidéo — une sélection de mes travaux.</p>
+                        <p class="mt-2 text-gray-500 dark:text-dark-muted">Sites statiques, design, affiches, logo, montage vidéo — une sélection de mes travaux.</p>
                     </div>
                     <a href="{{ route('projects.index') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium text-sm">Voir tout →</a>
                 </div>
@@ -118,8 +194,6 @@
                                 <span class="text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
                                     @switch($project->type)
                                         @case('web_static') Site web statique @break
-                                        @case('web_dynamic') Site web dynamique @break
-                                        @case('web_live') Application web @break
                                         @case('design') Design @break
                                         @case('affiche') Affiche @break
                                         @case('logo') Logo @break

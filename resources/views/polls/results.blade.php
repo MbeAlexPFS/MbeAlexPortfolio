@@ -4,20 +4,20 @@
 
 @section('content')
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <a href="{{ route('polls.index') }}" class="text-sm text-gray-500 hover:text-indigo-600 transition">&larr; Retour aux sondages</a>
+        <a href="{{ route('polls.index') }}" class="text-sm text-gray-500 dark:text-dark-muted hover:text-indigo-600 dark:hover:text-indigo-400 transition">&larr; Retour aux sondages</a>
 
-        <h1 class="mt-6 text-3xl font-bold text-gray-900">{{ $poll->title }}</h1>
+        <h1 class="mt-6 text-3xl font-bold text-gray-900 dark:text-dark-text">{{ $poll->title }}</h1>
         @if($poll->description)
-            <p class="mt-2 text-gray-500">{{ $poll->description }}</p>
+            <p class="mt-2 text-gray-500 dark:text-dark-muted">{{ $poll->description }}</p>
         @endif
 
-        <p class="mt-4 text-sm text-gray-400">{{ $totalVoters }} participant(s)</p>
+        <p class="mt-4 text-sm text-gray-400 dark:text-dark-muted">{{ $totalVoters }} participant(s)</p>
 
         <div class="mt-10 space-y-8">
             @foreach($stats as $stat)
-                <div class="bg-white border border-gray-200 rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-900">{{ $stat['question']->text }}</h2>
-                    <p class="text-sm text-gray-400 mt-1">{{ $stat['total_participants'] }} réponse(s)</p>
+                <div class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text">{{ $stat['question']->text }}</h2>
+                    <p class="text-sm text-gray-400 dark:text-dark-muted mt-1">{{ $stat['total_participants'] }} réponse(s)</p>
 
                     @if($stat['question']->type === 'text_short')
                         <div class="mt-4 space-y-2">
@@ -27,9 +27,9 @@
                                     ->latest()->get();
                             @endphp
                             @forelse($textAnswers as $answer)
-                                <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-700">{{ $answer->text_response }}</div>
+                                <div class="bg-gray-50 dark:bg-dark-bg rounded-lg p-3 text-sm text-gray-700 dark:text-dark-text">{{ $answer->text_response }}</div>
                             @empty
-                                <p class="text-sm text-gray-400">Aucune réponse textuelle.</p>
+                                <p class="text-sm text-gray-400 dark:text-dark-muted">Aucune réponse textuelle.</p>
                             @endforelse
                         </div>
                     @else
@@ -37,10 +37,10 @@
                             @foreach($stat['option_stats'] as $optStat)
                                 <div>
                                     <div class="flex justify-between text-sm mb-1">
-                                        <span class="text-gray-700">{{ $optStat['option']->text }}</span>
-                                        <span class="text-gray-400">{{ $optStat['count'] }} ({{ $optStat['percentage'] }}%)</span>
+                                        <span class="text-gray-700 dark:text-dark-text">{{ $optStat['option']->text }}</span>
+                                        <span class="text-gray-400 dark:text-dark-muted">{{ $optStat['count'] }} ({{ $optStat['percentage'] }}%)</span>
                                     </div>
-                                    <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-2.5 bg-gray-100 dark:bg-dark-border rounded-full overflow-hidden">
                                         <div class="h-full bg-indigo-500 rounded-full transition-all" style="width: {{ $optStat['percentage'] }}%"></div>
                                     </div>
                                 </div>

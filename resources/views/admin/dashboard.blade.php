@@ -37,7 +37,28 @@
             <a href="{{ route('admin.blog.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Gérer le blog</a>
             <a href="{{ route('admin.polls.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Gérer les sondages</a>
             <a href="{{ route('admin.contact.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Messages reçus</a>
+            <a href="{{ route('admin.formations.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Gérer les formations</a>
             <a href="{{ route('admin.profile.edit') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Profil du site</a>
+            <a href="{{ route('admin.cv') }}" class="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">Télécharger mon CV (PDF)</a>
+        </div>
+
+        <div class="mt-6 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-5 flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-900 dark:text-dark-text">Mode maintenance</p>
+                <p class="text-xs text-gray-500 dark:text-dark-muted mt-0.5">
+                    @if($maintenance)
+                        Actif — les visiteurs voient une page de maintenance. Vous y avez toujours accès.
+                    @else
+                        Inactif — le site est accessible à tous.
+                    @endif
+                </p>
+            </div>
+            <form method="POST" action="{{ route('admin.maintenance.toggle') }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+                @csrf
+                <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $maintenance ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-amber-600 text-white hover:bg-amber-700' }}">
+                    {{ $maintenance ? 'Désactiver' : 'Activer' }}
+                </button>
+            </form>
         </div>
 
         <div class="mt-10 grid lg:grid-cols-2 gap-8">
@@ -52,12 +73,12 @@
                             </div>
                             <p class="mt-1 text-sm text-gray-600 dark:text-dark-muted">{{ Str::limit($comment->content, 100) }}</p>
                             <div class="mt-2 flex gap-2">
-                                <form method="POST" action="{{ route('comments.approve', $comment) }}">
+                                <form method="POST" action="{{ route('admin.comments.approve', $comment) }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
                                     @csrf
                                     @method('PUT')
                                     <button class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">Approuver</button>
                                 </form>
-                                <form method="POST" action="{{ route('comments.reject', $comment) }}">
+                                <form method="POST" action="{{ route('admin.comments.reject', $comment) }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
                                     @csrf
                                     @method('DELETE')
                                     <button class="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Rejeter</button>

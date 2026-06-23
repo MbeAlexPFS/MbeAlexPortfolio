@@ -21,8 +21,6 @@
                         <span class="text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
                             @switch($project->type)
                                 @case('web_static') Site web statique @break
-                                @case('web_dynamic') Site web dynamique @break
-                                @case('web_live') Application web @break
                                 @case('design') Design @break
                                 @case('affiche') Affiche @break
                                 @case('logo') Logo @break

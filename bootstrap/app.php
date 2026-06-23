@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\CheckActive;
+use App\Http\Middleware\CheckAdmin;
+use App\Http\Middleware\CheckMaintenance;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,9 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\CheckAdmin::class,
-            'active' => \App\Http\Middleware\CheckActive::class,
+            'admin' => CheckAdmin::class,
+            'active' => CheckActive::class,
+            'maintenance' => CheckMaintenance::class,
         ]);
+
+        $middleware->web(append: [CheckMaintenance::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

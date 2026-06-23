@@ -36,7 +36,7 @@
                             <td class="py-3 text-gray-900 dark:text-dark-text">{{ $user->is_active ? 'Oui' : 'Non' }}</td>
                             <td class="py-3 text-gray-400 dark:text-dark-muted text-xs">{{ $user->created_at->format('d/m/Y') }}</td>
                             <td class="py-3">
-                                <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}">
+                                <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
                                     @csrf
                                     @method('PUT')
                                     <button type="submit" class="text-xs {{ $user->is_active ? 'text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300' : 'text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300' }} font-medium">

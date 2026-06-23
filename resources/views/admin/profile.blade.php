@@ -8,7 +8,7 @@
         <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text">Profil du site</h1>
         <p class="mt-1 text-gray-500 dark:text-dark-muted">Configurez les informations affichées sur la page d'accueil.</p>
 
-        <form method="POST" action="{{ route('admin.profile.update') }}" class="mt-8 space-y-5">
+        <form method="POST" action="{{ route('admin.profile.update') }}" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
             @csrf
             @method('PUT')
 

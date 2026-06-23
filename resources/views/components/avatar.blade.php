@@ -11,15 +11,17 @@
 
     $containerClass = $sizes[$size] ?? $sizes['md'];
 
-    $initials = strtoupper(
-        collect(explode(' ', $user->pseudo))
-            ->map(fn($part) => substr($part, 0, 1))
-            ->take(2)
-            ->implode('')
-    );
+    $initials = $user
+        ? strtoupper(
+            collect(explode(' ', $user->pseudo))
+                ->map(fn($part) => substr($part, 0, 1))
+                ->take(2)
+                ->implode('')
+        )
+        : '?';
 @endphp
 
-@if($user->avatar_url)
+@if($user && $user->avatar_url)
     <img src="{{ $user->avatar_url }}"
          alt="{{ $user->pseudo }}"
          class="{{ $containerClass }} rounded-full object-cover flex-shrink-0 {{ $class }}">

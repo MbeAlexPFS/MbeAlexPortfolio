@@ -19,7 +19,7 @@ class ArticleFactory extends Factory
         return [
             'user_id' => User::factory(),
             'title' => $title,
-            'slug' => Str::slug($title) . '-' . fake()->unique()->randomNumber(4),
+            'slug' => Str::slug($title).'-'.fake()->unique()->randomNumber(4),
             'content' => fake()->paragraphs(8, true),
             'excerpt' => fake()->paragraph(2),
             'image_url' => null,

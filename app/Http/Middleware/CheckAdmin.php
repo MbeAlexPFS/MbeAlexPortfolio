@@ -10,8 +10,12 @@ class CheckAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->isAdmin()) {
-            abort(403);
+        if (! $request->user()) {
+            return response()->view('errors.403', [], 403);
+        }
+
+        if (! $request->user()->isAdmin()) {
+            return response()->view('errors.403', [], 403);
         }
 
         return $next($request);

@@ -16,15 +16,23 @@ public_html/storage
 public_html/hot
 
 storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/backup/*
 .env
 Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
-
 /public/build
 /storage/pail
 .env.backup
 .env.production
+.env.*.enc
 .phpactor.json
 auth.json
+/.idea/
+*.swp
+*~

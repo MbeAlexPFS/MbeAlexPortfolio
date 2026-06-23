@@ -65,13 +65,13 @@ class ArticleController extends Controller
             'tags.*' => ['exists:tags,id'],
         ]);
 
-        $data['slug'] = Str::slug($data['title']) . '-' . Str::random(4);
+        $data['slug'] = Str::slug($data['title']).'-'.Str::random(4);
         $data['user_id'] = Auth::id();
         $data['is_published'] = $request->boolean('is_published');
 
         $article = Article::create($data);
 
-        if (!empty($data['tags'])) {
+        if (! empty($data['tags'])) {
             $article->tags()->attach($data['tags']);
         }
 
@@ -108,7 +108,7 @@ class ArticleController extends Controller
         $article->update($data);
         $article->tags()->sync($data['tags'] ?? []);
 
-        if (!$wasPublished && $data['is_published']) {
+        if (! $wasPublished && $data['is_published']) {
             $this->notifyArticleSubscribers($article);
         }
 

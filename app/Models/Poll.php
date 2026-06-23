@@ -5,10 +5,11 @@ namespace App\Models;
 use Database\Factories\PollFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['title', 'description', 'is_active', 'start_date', 'end_date'])]
-class Poll extends \Illuminate\Database\Eloquent\Model
+class Poll extends Model
 {
     /** @use HasFactory<PollFactory> */
     use HasFactory;
@@ -31,7 +32,7 @@ class Poll extends \Illuminate\Database\Eloquent\Model
     {
         $now = now();
 
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 

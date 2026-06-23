@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-text text-center">Inscription</h1>
         <p class="mt-2 text-sm text-gray-500 dark:text-dark-muted text-center">Créez un compte pour participer aux sondages et commenter.</p>
 
-        <form method="POST" action="{{ route('auth.register') }}" class="mt-8 space-y-5">
+        <form method="POST" action="{{ route('auth.register') }}" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
             @csrf
             <div>
                 <label for="pseudo" class="block text-sm font-medium text-gray-700 dark:text-dark-muted">Pseudo</label>
@@ -32,7 +32,7 @@
                 <input type="password" name="password_confirmation" id="password_confirmation" required
                     class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-bg px-3 py-2.5 text-sm text-gray-900 dark:text-dark-text shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition text-sm">
+            <button type="submit" class="w-full bg-indigo-600 dark:bg-indigo-500 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm">
                 Créer mon compte
             </button>
         </form>
