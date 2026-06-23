@@ -34,7 +34,8 @@ RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader -
 RUN bun install --frozen-lockfile
 
 COPY . .
-RUN php artisan package:discover --ansi && \
+RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php && \
+    php artisan package:discover --ansi && \
     bun run build && rm -rf node_modules
 
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
