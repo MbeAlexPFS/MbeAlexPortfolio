@@ -30,11 +30,12 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 WORKDIR /app
 
 COPY composer.json composer.lock package.json bun.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 RUN bun install --frozen-lockfile
 
 COPY . .
-RUN bun run build && rm -rf node_modules
+RUN php artisan package:discover --ansi && \
+    bun run build && rm -rf node_modules
 
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
