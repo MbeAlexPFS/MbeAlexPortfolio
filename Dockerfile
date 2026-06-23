@@ -17,7 +17,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     zip \
     bcmath
 
-RUN docker-php-ext-install opcache
+RUN docker-php-ext-enable opcache
 
 RUN a2enmod proxy proxy_fcgi rewrite
 
