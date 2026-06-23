@@ -6,9 +6,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -39,9 +39,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/auth/connexion', [AuthController::class, 'showLogin'])->name('auth.login');
     Route::post('/auth/connexion', [AuthController::class, 'login'])->name('auth.login');
 
-    Route::get('/auth/verifier-otp', [AuthController::class, 'showVerifyOtp'])->name('auth.verify-otp');
-    Route::post('/auth/verifier-otp', [AuthController::class, 'verifyOtp'])->name('auth.verify-otp');
-
     Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });
@@ -60,7 +57,6 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profil/pseudo', [ProfileController::class, 'updatePseudo'])->name('profile.update-pseudo');
     Route::put('/profil/mot-de-passe', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
-    Route::put('/profil/newsletters', [ProfileController::class, 'updateNewsletters'])->name('profile.update-newsletters');
     Route::post('/profil/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.update-avatar');
     Route::delete('/profil/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.delete-avatar');
 });
@@ -68,14 +64,12 @@ Route::middleware(['auth', 'active'])->group(function () {
 // ChatBot
 Route::post('/chatbot', [ChatBotController::class, 'chat'])->name('chatbot.chat');
 
+// RSS Feeds
+Route::get('/feed/articles', [FeedController::class, 'articles'])->name('feeds.articles');
+Route::get('/feed/projets', [FeedController::class, 'projects'])->name('feeds.projects');
+
 // Maintenance login
 Route::post('/maintenance/login', [AuthController::class, 'maintenanceLogin'])->name('maintenance.login');
-
-// Newsletter unsubscription (signed routes)
-Route::get('/newsletters/desabonner/articles/{user}', [NewsletterController::class, 'unsubscribeArticles'])
-    ->name('newsletter.unsubscribe-articles');
-Route::get('/newsletters/desabonner/sondages/{user}', [NewsletterController::class, 'unsubscribePolls'])
-    ->name('newsletter.unsubscribe-polls');
 
 // Admin
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {

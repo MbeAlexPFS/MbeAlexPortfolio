@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PollPublishedMail;
 use App\Models\Answer;
 use App\Models\Poll;
 use App\Models\Question;
 use App\Models\QuestionOption;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class PollController extends Controller
@@ -243,10 +240,6 @@ class PollController extends Controller
             'end_date' => $data['end_date'] ?? null,
         ]);
 
-        if (! $wasActive && $isActive && $poll->questions()->exists()) {
-            $this->notifyPollSubscribers($poll);
-        }
-
         return back()->with('success', 'Sondage mis à jour.');
     }
 
@@ -321,18 +314,5 @@ class PollController extends Controller
         $question->delete();
 
         return back()->with('success', 'Question supprimée.');
-    }
-
-    private function notifyPollSubscribers(Poll $poll): void
-    {
-        $subscribers = User::where('newsletter_polls', true)
-            ->where('is_active', true)
-            ->get();
-
-        foreach ($subscribers as $subscriber) {
-            Mail::to($subscriber)->queue(
-                new PollPublishedMail($poll, $subscriber),
-            );
-        }
     }
 }

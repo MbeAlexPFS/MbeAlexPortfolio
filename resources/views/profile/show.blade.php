@@ -69,26 +69,6 @@
             </form>
         </section>
 
-        {{-- Newsletters --}}
-        <section class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text">Newsletters</h2>
-            <form method="POST" action="{{ route('profile.update-newsletters') }}" class="mt-4 space-y-3" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
-                @csrf
-                @method('PUT')
-                <label class="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" name="newsletter_articles" value="1" {{ $user->newsletter_articles ? 'checked' : '' }}
-                        class="rounded border-gray-300 dark:border-dark-border text-indigo-600 focus:ring-indigo-500">
-                    <span class="text-sm text-gray-700 dark:text-dark-muted">Recevoir les nouveaux articles</span>
-                </label>
-                <label class="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" name="newsletter_polls" value="1" {{ $user->newsletter_polls ? 'checked' : '' }}
-                        class="rounded border-gray-300 dark:border-dark-border text-indigo-600 focus:ring-indigo-500">
-                    <span class="text-sm text-gray-700 dark:text-dark-muted">Recevoir les nouveaux sondages</span>
-                </label>
-                <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">Enregistrer</button>
-            </form>
-        </section>
-
         {{-- Poll history --}}
         <section class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-6">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text">Historique des participations</h2>

@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ArticlePublishedMail;
 use App\Models\Article;
 use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -75,10 +72,6 @@ class ArticleController extends Controller
             $article->tags()->attach($data['tags']);
         }
 
-        if ($data['is_published']) {
-            $this->notifyArticleSubscribers($article);
-        }
-
         return to_route('admin.blog.index')->with('success', 'Article créé.');
     }
 
@@ -108,10 +101,6 @@ class ArticleController extends Controller
         $article->update($data);
         $article->tags()->sync($data['tags'] ?? []);
 
-        if (! $wasPublished && $data['is_published']) {
-            $this->notifyArticleSubscribers($article);
-        }
-
         return to_route('admin.blog.index')->with('success', 'Article mis à jour.');
     }
 
@@ -120,17 +109,5 @@ class ArticleController extends Controller
         $article->delete();
 
         return back()->with('success', 'Article supprimé.');
-    }
-
-    private function notifyArticleSubscribers(Article $article): void
-    {
-        $subscribers = User::where('newsletter_articles', true)
-            ->where('is_active', true)
-            ->get();
-
-        foreach ($subscribers as $subscriber) {
-            Mail::to($subscriber)
-                ->queue(new ArticlePublishedMail($article, $subscriber));
-        }
     }
 }

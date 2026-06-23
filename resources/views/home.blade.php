@@ -105,13 +105,7 @@
                     <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Connexion OAuth</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Inscription et connexion via Google, sans mot de passe.</p>
                 </div>
-                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
-                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.981l7.5-4.039a2.25 2.25 0 012.134 0l7.5 4.039a2.25 2.25 0 011.183 1.98V19.5z"/></svg>
-                    </div>
-                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-dark-text">Newsletters</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">Abonnez-vous pour recevoir les nouveaux articles et sondages par email.</p>
-                </div>
+
             </div>
         </div>
     </section>
@@ -217,4 +211,46 @@
             </div>
         </section>
     @endif
+
+    {{-- RSS --}}
+    <section class="bg-white dark:bg-dark-card py-20 scroll-reveal">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-dark-text">Suivre le site sans email</h2>
+            <p class="mt-2 text-gray-500 dark:text-dark-muted">
+                Ce site propose des <strong>flux RSS</strong> pour suivre les nouveaux articles et projets sans avoir à vérifier manuellement.
+            </p>
+            <div class="mt-8 grid sm:grid-cols-2 gap-6">
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-text">Articles du blog</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">
+                        Colle cette URL dans ton lecteur RSS :
+                    </p>
+                    <div class="mt-3 flex items-center gap-2">
+                        <code class="flex-1 text-xs bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded px-3 py-2 text-gray-700 dark:text-dark-muted select-all truncate">
+                            {{ route('feeds.articles') }}
+                        </code>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-dark-bg rounded-xl p-6">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-text">Projets du portfolio</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-muted">
+                        Colle cette URL dans ton lecteur RSS :
+                    </p>
+                    <div class="mt-3 flex items-center gap-2">
+                        <code class="flex-1 text-xs bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded px-3 py-2 text-gray-700 dark:text-dark-muted select-all truncate">
+                            {{ route('feeds.projects') }}
+                        </code>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30 rounded-xl p-5">
+                <h3 class="font-semibold text-amber-800 dark:text-amber-300 text-sm">Comment faire ?</h3>
+                <ol class="mt-2 text-sm text-amber-700 dark:text-amber-400 list-decimal list-inside space-y-1">
+                    <li>Télécharge un lecteur RSS (ex: <a href="https://feedly.com" target="_blank" class="underline">Feedly</a>, <a href="https://www.inoreader.com" target="_blank" class="underline">Inoreader</a>, <a href="https://netnewswire.com" target="_blank" class="underline">NetNewsWire</a>, <a href="https://thunderbird.net" target="_blank" class="underline">Thunderbird</a>).</li>
+                    <li>Ajoute un nouveau flux avec une des URLs ci-dessus.</li>
+                    <li>Tu recevras automatiquement les mises à jour dans ton lecteur.</li>
+                </ol>
+            </div>
+        </div>
+    </section>
 @endsection

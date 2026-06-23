@@ -48,24 +48,6 @@ class ProfileController extends Controller
         return back()->with('success', 'Mot de passe mis à jour.');
     }
 
-    public function updateNewsletters(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'newsletter_articles' => ['boolean'],
-            'newsletter_polls' => ['boolean'],
-        ]);
-
-        Auth::user()->update([
-            'newsletter_articles' => $request->boolean('newsletter_articles'),
-            'newsletter_polls' => $request->boolean('newsletter_polls'),
-        ]);
-
-        return back()->with(
-            'success',
-            'Préférences de newsletter mises à jour.',
-        );
-    }
-
     public function updateAvatar(Request $request): RedirectResponse
     {
         $request->validate([

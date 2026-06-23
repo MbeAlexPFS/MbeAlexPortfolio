@@ -176,7 +176,7 @@ class ChatBotController extends Controller
         -- **Nom du site** : MbeAlex Portfolio
         -- **Créateur** : Alex Mbe (prénom : Alex, nom : Mbe). Il est développeur web créatif, spécialisé dans la conception de sites web statiques, le design graphique, la création d'affiches, de logos et le montage vidéo.
         -- **Types de projets présentés** : Sites web statiques, Designs, Affiches, Logos, Montages vidéo.
-        -- **Fonctionnalités du site** : Galerie de projets, blog avec commentaires, sondages, inscription newsletter, compétences, mode sombre, profil personnalisable.
+        -- **Fonctionnalités du site** : Galerie de projets, blog avec commentaires, sondages, compétences, mode sombre, profil personnalisable.
         -- **Technologies utilisées** : Laravel 13, Tailwind CSS, Alpine.js, MySQL, Vite.
         -- **Contact** : Les visiteurs peuvent envoyer un message via la page Contact.
 

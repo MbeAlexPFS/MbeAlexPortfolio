@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\OtpMail;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -10,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -34,25 +32,17 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
         $user = User::create([
             'pseudo' => $data['pseudo'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'otp_code' => Hash::make($otp),
-            'otp_expires_at' => now()->addMinutes(15),
             'role' => 'user',
+            'is_verified' => true,
         ]);
 
-        Mail::to($user)->send(new OtpMail($user, $otp));
+        Auth::login($user);
 
-        session(['otp_user_id' => $user->id]);
-
-        return to_route('auth.verify-otp')->with(
-            'success',
-            'Compte créé. Un code OTP vous a été envoyé par email.',
-        );
+        return to_route('home')->with('success', 'Compte créé avec succès.');
     }
 
     public function showLogin(): View
@@ -89,48 +79,6 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return to_route('home');
-    }
-
-    public function showVerifyOtp(): View
-    {
-        if (! session('otp_user_id')) {
-            return to_route('auth.login');
-        }
-
-        return view('auth.verify-otp');
-    }
-
-    public function verifyOtp(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'otp' => ['required', 'string', 'size:6'],
-        ]);
-
-        $userId = session('otp_user_id');
-        $user = User::find($userId);
-
-        if (! $user || ! $user->otp_code || ! $user->otp_expires_at) {
-            return back()->withErrors(['otp' => 'Session invalide.']);
-        }
-
-        if (now()->gt($user->otp_expires_at)) {
-            return back()->withErrors(['otp' => 'Code expiré.']);
-        }
-
-        if (! Hash::check($request->otp, $user->otp_code)) {
-            return back()->withErrors(['otp' => 'Code incorrect.']);
-        }
-
-        $user->update([
-            'is_verified' => true,
-            'otp_code' => null,
-            'otp_expires_at' => null,
-        ]);
-
-        session()->forget('otp_user_id');
-        Auth::login($user);
-
-        return to_route('home')->with('success', 'Compte vérifié avec succès.');
     }
 
     public function redirectToGoogle(): RedirectResponse

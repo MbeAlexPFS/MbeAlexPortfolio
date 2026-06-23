@@ -14,11 +14,10 @@ use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'pseudo', 'email', 'password', 'google_id', 'role',
-    'is_verified', 'otp_code', 'otp_expires_at', 'avatar_url',
-    'newsletter_articles', 'newsletter_polls', 'is_active',
+    'is_verified', 'avatar_url', 'is_active',
     'headline', 'bio', 'social_links',
 ])]
-#[Hidden(['password', 'remember_token', 'otp_code', 'otp_expires_at'])]
+#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -28,9 +27,6 @@ class User extends Authenticatable
     {
         return [
             'is_verified' => 'boolean',
-            'otp_expires_at' => 'datetime',
-            'newsletter_articles' => 'boolean',
-            'newsletter_polls' => 'boolean',
             'is_active' => 'boolean',
             'password' => 'hashed',
             'social_links' => 'array',
