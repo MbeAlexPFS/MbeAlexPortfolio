@@ -7,6 +7,9 @@ services:
       - "8080:80"
     env_file:
       - .env
+    environment:
+      APP_URL: "http://localhost:8080"
+      DB_HOST: db
     depends_on:
       db:
         condition: service_healthy
