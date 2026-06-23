@@ -17,7 +17,7 @@ return new class extends Migration
 
         DB::table('settings')->insert([
             'key' => 'maintenance_mode',
-            'value' => '0',
+            'value' => '1',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

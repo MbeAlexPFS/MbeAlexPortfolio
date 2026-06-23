@@ -24,6 +24,8 @@ class MaintenanceModeTest extends TestCase
 
     public function test_site_is_accessible_when_maintenance_is_off(): void
     {
+        Setting::where('key', 'maintenance_mode')->update(['value' => '0']);
+
         $response = $this->get('/');
 
         $response->assertStatus(200);
@@ -70,11 +72,11 @@ class MaintenanceModeTest extends TestCase
 
         $this->actingAs($admin)->post('/admin/maintenance');
 
-        $this->assertTrue(Setting::isMaintenance());
+        $this->assertFalse(Setting::isMaintenance());
 
         $this->actingAs($admin)->post('/admin/maintenance');
 
-        $this->assertFalse(Setting::isMaintenance());
+        $this->assertTrue(Setting::isMaintenance());
     }
 
     public function test_all_routes_are_blocked_during_maintenance_including_auth(): void
