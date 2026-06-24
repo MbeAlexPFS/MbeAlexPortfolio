@@ -23,7 +23,7 @@ class PollController extends Controller
             ->where(function ($q) {
                 $q->whereNull('end_date')->orWhere('end_date', '>=', now());
             })
-            ->withCount('questions')
+            ->withCount('questions', 'views')
             ->latest()
             ->paginate(10);
 
@@ -36,6 +36,8 @@ class PollController extends Controller
             abort(404);
         }
 
+        $poll->loadCount('views');
+
         $hasVoted = Answer::where('user_id', Auth::id())
             ->whereIn('question_id', $poll->questions()->pluck('id'))
             ->exists();
@@ -43,6 +45,8 @@ class PollController extends Controller
         if ($hasVoted) {
             return to_route('polls.results', $poll);
         }
+
+        $poll->recordView();
 
         return view('polls.vote', compact('poll'));
     }
@@ -176,7 +180,7 @@ class PollController extends Controller
 
     public function adminIndex(): View
     {
-        $polls = Poll::withCount('questions')->latest()->paginate(20);
+        $polls = Poll::withCount('questions', 'views')->latest()->paginate(20);
 
         return view('admin.polls.index', compact('polls'));
     }

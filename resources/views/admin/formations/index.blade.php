@@ -23,10 +23,10 @@
                             {{ $formation->status === 'completed' ? 'Terminé' : 'En cours' }}
                         </span>
                         <a href="{{ route('admin.formations.edit', $formation) }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Modifier</a>
-                        <form method="POST" action="{{ route('admin.formations.destroy', $formation) }}" x-on:submit="if(confirm('Supprimer cette formation ?')) $el.querySelector('button[type=submit]').disabled = true; else $event.preventDefault()">
+                        <form method="POST" action="{{ route('admin.formations.destroy', $formation) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
+                            <x-button type="submit" variant="danger" size="sm" loading-text="...">Supprimer</x-button>
                         </form>
                     </div>
                 </div>

@@ -53,49 +53,31 @@
                                     <form method="POST" action="{{ route('admin.projects.thumbnail.cancel', $project) }}" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-xs text-red-500 hover:text-red-600 underline">Annuler</button>
+                                        <x-button type="submit" variant="danger" size="sm">Annuler</x-button>
                                     </form>
                                 </span>
                             </template>
                             <template x-if="!thumbStatus || thumbStatus === 'failed'">
-                                <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}"
-                                      class="inline" x-data="{ submitting: false }"
-                                      x-on:submit="submitting = true">
+                                <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}" class="inline">
                                     @csrf
-                                    <button type="submit" :disabled="submitting"
-                                            :class="submitting && 'opacity-50 cursor-not-allowed'"
-                                            class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium">
-                                        <span x-show="!submitting">Miniature</span>
-                                        <span x-show="submitting">Génération...</span>
-                                    </button>
+                                    <x-button type="submit" variant="warning" size="sm" loading-text="Génération...">Miniature</x-button>
                                 </form>
                             </template>
                             <template x-if="thumbStatus === 'completed'">
                                 <span class="text-sm text-green-600 dark:text-green-400 font-medium">Miniature &#10003;</span>
                             </template>
                             <template x-if="thumbStatus === 'completed'">
-                                <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}"
-                                      class="inline" x-data="{ submitting: false }"
-                                      x-on:submit="if(confirm('Remplacer la miniature existante ?')) submitting = true; else $event.preventDefault()">
+                                <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}" class="inline">
                                     @csrf
-                                    <button type="submit" :disabled="submitting"
-                                            :class="submitting && 'opacity-50 cursor-not-allowed'"
-                                            class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium">
-                                        <span x-show="!submitting">Remplacer</span>
-                                        <span x-show="submitting">Génération...</span>
-                                    </button>
+                                    <x-button type="submit" variant="warning" size="sm" loading-text="Génération...">Remplacer</x-button>
                                 </form>
                             </template>
                         @endif
                         <a href="{{ route('admin.projects.edit', $project) }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Modifier</a>
-                        <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
-                              class="inline" x-data="{ submitting: false }"
-                              x-on:submit="if(confirm('Supprimer ce projet ?')) submitting = true; else $event.preventDefault()">
+                        <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" :disabled="submitting"
-                                    :class="submitting && 'opacity-50 cursor-not-allowed'"
-                                    class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
+                            <x-button type="submit" variant="danger" size="sm" loading-text="...">Supprimer</x-button>
                         </form>
                     </div>
                 </div>

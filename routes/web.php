@@ -103,6 +103,8 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/blog/{article}/editer', [ArticleController::class, 'edit'])->name('blog.edit');
     Route::put('/blog/{article}', [ArticleController::class, 'update'])->name('blog.update');
     Route::delete('/blog/{article}', [ArticleController::class, 'destroy'])->name('blog.destroy');
+    Route::post('/blog/images', [ArticleController::class, 'uploadImage'])->name('blog.images.upload');
+    Route::post('/blog/preview', [ArticleController::class, 'previewMarkdown'])->name('blog.preview');
 
     Route::put('/commentaires/{comment}/approuver', [CommentController::class, 'approve'])->name('comments.approve');
     Route::delete('/commentaires/{comment}/rejeter', [CommentController::class, 'reject'])->name('comments.reject');

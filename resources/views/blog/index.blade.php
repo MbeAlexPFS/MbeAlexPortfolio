@@ -43,6 +43,10 @@
                                 @if($article->excerpt)
                                     <p class="mt-2 text-sm text-gray-500 dark:text-dark-muted line-clamp-2">{{ $article->excerpt }}</p>
                                 @endif
+                                <div class="mt-2 flex items-center gap-3 text-xs text-gray-400 dark:text-dark-muted">
+                                    <span>{{ $article->views_count }} vue{{ $article->views_count !== 1 ? 's' : '' }}</span>
+                                    <span>{{ $article->comments_count }} commentaire{{ $article->comments_count !== 1 ? 's' : '' }}</span>
+                                </div>
                             </div>
                             <a href="{{ route('blog.show', $article->slug) }}" class="mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
                                 Lire la suite &rarr;

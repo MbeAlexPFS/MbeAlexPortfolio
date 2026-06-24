@@ -53,11 +53,11 @@
                     @endif
                 </p>
             </div>
-            <form method="POST" action="{{ route('admin.maintenance.toggle') }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+            <form method="POST" action="{{ route('admin.maintenance.toggle') }}">
                 @csrf
-                <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium transition {{ $maintenance ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-amber-600 text-white hover:bg-amber-700' }}">
+                <x-button type="submit" variant="{{ $maintenance ? 'success' : 'warning' }}" size="md" loading-text="...">
                     {{ $maintenance ? 'Désactiver' : 'Activer' }}
-                </button>
+                </x-button>
             </form>
         </div>
 
@@ -73,15 +73,15 @@
                             </div>
                             <p class="mt-1 text-sm text-gray-600 dark:text-dark-muted">{{ Str::limit($comment->content, 100) }}</p>
                             <div class="mt-2 flex gap-2">
-                                <form method="POST" action="{{ route('admin.comments.approve', $comment) }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+                                <form method="POST" action="{{ route('admin.comments.approve', $comment) }}">
                                     @csrf
                                     @method('PUT')
-                                    <button class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">Approuver</button>
+                                    <x-button type="submit" variant="success" size="sm" loading-text="...">Approuver</x-button>
                                 </form>
-                                <form method="POST" action="{{ route('admin.comments.reject', $comment) }}" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+                                <form method="POST" action="{{ route('admin.comments.reject', $comment) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Rejeter</button>
+                                    <x-button type="submit" variant="danger" size="sm" loading-text="...">Rejeter</x-button>
                                 </form>
                             </div>
                         </div>

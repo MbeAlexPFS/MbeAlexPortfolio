@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasViews;
 use Database\Factories\PollFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Poll extends Model
 {
     /** @use HasFactory<PollFactory> */
-    use HasFactory;
+    use HasFactory, HasViews;
 
     protected function casts(): array
     {

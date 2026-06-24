@@ -7,7 +7,7 @@
         <a href="{{ route('admin.projects.index') }}" class="text-sm text-gray-500 dark:text-dark-muted hover:text-indigo-600 dark:hover:text-indigo-400 transition">&larr; Retour</a>
         <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text">{{ isset($project) ? 'Modifier le projet' : 'Nouveau projet' }}</h1>
 
-        <form method="POST" action="{{ isset($project) ? route('admin.projects.update', $project) : route('admin.projects.store') }}" enctype="multipart/form-data" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+        <form method="POST" action="{{ isset($project) ? route('admin.projects.update', $project) : route('admin.projects.store') }}" enctype="multipart/form-data" class="mt-8 space-y-5">
             @csrf
             @if(isset($project)) @method('PUT') @endif
 
@@ -130,9 +130,9 @@
                  }"
                  x-init="thumbPoll()"
                  @endif>
-                <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+                <x-button type="submit" variant="primary" size="lg" loading-text="Enregistrement...">
                     {{ isset($project) ? 'Mettre à jour' : 'Créer le projet' }}
-                </button>
+                </x-button>
                 @if(isset($project) && $project->type === 'web_static' && $project->live_url)
                     <template x-if="thumbStatus === 'pending' || thumbStatus === 'processing'">
                         <span class="text-sm text-amber-500 animate-pulse flex items-center gap-2">
@@ -140,28 +140,25 @@
                             <form method="POST" action="{{ route('admin.projects.thumbnail.cancel', $project) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-xs text-red-500 hover:text-red-600 underline">Annuler</button>
+                                <x-button type="submit" variant="danger" size="sm">Annuler</x-button>
                             </form>
                         </span>
                     </template>
                     <template x-if="!thumbStatus || thumbStatus === 'failed' || thumbStatus === ''">
-                        <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}"
-                              @submit="$event.target.querySelector('button').disabled = true; $event.target.querySelector('button').textContent = '...'">
+                        <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}">
                             @csrf
-                            <button type="submit" class="border border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-50 dark:hover:bg-amber-900/20 transition">
+                            <x-button type="submit" variant="warning" size="md" loading-text="Génération...">
                                 Générer la miniature
-                            </button>
+                            </x-button>
                         </form>
                     </template>
                     <template x-if="thumbStatus === 'completed'">
                         <span class="text-sm text-green-600 dark:text-green-400 font-medium">Miniature prête &#10003;</span>
                     </template>
                     <template x-if="thumbStatus === 'completed'">
-                        <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}"
-                              class="inline"
-                              x-on:submit="if(confirm('Remplacer la miniature existante ?')) $el.querySelector('button[type=submit]').disabled = true; else $event.preventDefault()">
+                        <form method="POST" action="{{ route('admin.projects.thumbnail', $project) }}" class="inline">
                             @csrf
-                            <button type="submit" class="border border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-50 dark:hover:bg-amber-900/20 transition">Remplacer</button>
+                            <x-button type="submit" variant="warning" size="md" loading-text="Génération...">Remplacer</x-button>
                         </form>
                     </template>
                 @endif

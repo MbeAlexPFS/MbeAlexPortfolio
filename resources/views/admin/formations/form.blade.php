@@ -7,7 +7,7 @@
         <a href="{{ route('admin.formations.index') }}" class="text-sm text-gray-500 dark:text-dark-muted hover:text-indigo-600 dark:hover:text-indigo-400 transition">&larr; Retour</a>
         <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text">{{ isset($formation) ? 'Modifier la formation' : 'Nouvelle formation' }}</h1>
 
-        <form method="POST" action="{{ isset($formation) ? route('admin.formations.update', $formation) : route('admin.formations.store') }}" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+        <form method="POST" action="{{ isset($formation) ? route('admin.formations.update', $formation) : route('admin.formations.store') }}" class="mt-8 space-y-5">
             @csrf
             @if(isset($formation)) @method('PUT') @endif
 
@@ -42,9 +42,9 @@
                 @error('status') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
             </div>
 
-            <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+            <x-button type="submit" variant="primary" size="lg" loading-text="Enregistrement...">
                 {{ isset($formation) ? 'Mettre à jour' : 'Ajouter la formation' }}
-            </button>
+            </x-button>
         </form>
     </div>
 @endsection

@@ -22,13 +22,17 @@
                         </div>
                         <h3 class="font-semibold text-gray-900 dark:text-dark-text mt-1">{{ $article->title }}</h3>
                         <p class="text-sm text-gray-500 dark:text-dark-muted">{{ Str::limit($article->excerpt ?? $article->content, 80) }}</p>
+                        <div class="mt-1 flex items-center gap-2 text-xs text-gray-400 dark:text-dark-muted">
+                            <span>{{ $article->views_count }} vue{{ $article->views_count !== 1 ? 's' : '' }}</span>
+                            <span>{{ $article->comments_count }} commentaire{{ $article->comments_count !== 1 ? 's' : '' }}</span>
+                        </div>
                     </div>
                     <div class="flex gap-2 ml-4">
                         <a href="{{ route('admin.blog.edit', $article) }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Modifier</a>
-                        <form method="POST" action="{{ route('admin.blog.destroy', $article) }}" onsubmit="return confirm('Supprimer cet article ?')">
+                        <form method="POST" action="{{ route('admin.blog.destroy', $article) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
+                            <x-button type="submit" variant="danger" size="sm" loading-text="...">Supprimer</x-button>
                         </form>
                     </div>
                 </div>

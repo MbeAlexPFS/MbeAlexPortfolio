@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Tag;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -15,6 +17,7 @@ class ArticleController extends Controller
     public function index(): View
     {
         $articles = Article::with('user', 'tags')
+            ->withCount('views', 'comments')
             ->where('is_published', true)
             ->latest()
             ->paginate(9);
@@ -27,9 +30,12 @@ class ArticleController extends Controller
     public function show(string $slug): View
     {
         $article = Article::with('user', 'tags', 'comments.user')
+            ->withCount('views', 'comments')
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
+
+        $article->recordView();
 
         return view('blog.show', compact('article'));
     }
@@ -37,6 +43,7 @@ class ArticleController extends Controller
     public function adminIndex(): View
     {
         $articles = Article::with('user', 'tags')
+            ->withCount('views', 'comments')
             ->latest()
             ->paginate(20);
 
@@ -109,5 +116,32 @@ class ArticleController extends Controller
         $article->delete();
 
         return back()->with('success', 'Article supprimé.');
+    }
+
+    public function uploadImage(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'image' => ['required', 'image', 'mimes:jpeg,png,gif,webp', 'max:10240'],
+        ]);
+
+        $path = $request->file('image')->store('articles', 'public');
+
+        return response()->json([
+            'url' => Storage::disk('public')->url($path),
+            'filename' => basename($path),
+        ]);
+    }
+
+    public function previewMarkdown(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'content' => ['required', 'string'],
+        ]);
+
+        $html = Str::of($data['content'])->markdown([
+            'html_input' => 'allow',
+        ]);
+
+        return response()->json(['html' => (string) $html]);
     }
 }

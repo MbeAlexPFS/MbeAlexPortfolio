@@ -7,7 +7,7 @@
         <a href="{{ route('admin.polls.index') }}" class="text-sm text-gray-500 dark:text-dark-muted hover:text-indigo-600 dark:hover:text-indigo-400 transition">&larr; Retour</a>
         <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text">{{ isset($poll) ? 'Gérer le sondage' : 'Nouveau sondage' }}</h1>
 
-        <form method="POST" action="{{ isset($poll) ? route('admin.polls.update', $poll) : route('admin.polls.store') }}" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+        <form method="POST" action="{{ isset($poll) ? route('admin.polls.update', $poll) : route('admin.polls.store') }}" class="mt-8 space-y-5">
             @csrf
             @if(isset($poll)) @method('PUT') @endif
 
@@ -43,9 +43,9 @@
                 <label for="is_active" class="text-sm text-gray-700 dark:text-dark-text">Actif</label>
             </div>
 
-            <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+            <x-button type="submit" variant="primary" size="lg" loading-text="Enregistrement...">
                 {{ isset($poll) ? 'Mettre à jour' : 'Créer le sondage' }}
-            </button>
+            </x-button>
         </form>
 
         @if(isset($poll))
@@ -68,10 +68,10 @@
                                     </div>
                                 @endif
                             </div>
-                            <form method="POST" action="{{ route('admin.polls.questions.destroy', $question) }}" onsubmit="return confirm('Supprimer cette question ?')">
+                            <form method="POST" action="{{ route('admin.polls.questions.destroy', $question) }}">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
+                                <x-button type="submit" variant="danger" size="sm" loading-text="...">Supprimer</x-button>
                             </form>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
 
             <div class="mt-8 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-text">Ajouter une question</h3>
-                <form method="POST" action="{{ route('admin.polls.questions.store', $poll) }}" class="mt-4 space-y-4" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+                <form method="POST" action="{{ route('admin.polls.questions.store', $poll) }}" class="mt-4 space-y-4">
                     @csrf
                     <div>
                         <label for="text" class="block text-sm font-medium text-gray-700 dark:text-dark-text">Texte de la question</label>
@@ -120,9 +120,9 @@
                             class="rounded border-gray-300 dark:border-dark-border text-indigo-600 focus:ring-indigo-500">
                         <label for="is_required" class="text-sm text-gray-700 dark:text-dark-text">Obligatoire</label>
                     </div>
-                    <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+                    <x-button type="submit" variant="primary" size="md" loading-text="Ajout...">
                         Ajouter la question
-                    </button>
+                    </x-button>
                 </form>
             </div>
         @endif

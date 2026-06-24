@@ -19,6 +19,7 @@
                                 {{ $poll->is_active ? 'Actif' : 'Inactif' }}
                             </span>
                             <span class="text-gray-400 dark:text-dark-muted">{{ $poll->questions_count }} question(s)</span>
+                            <span class="text-gray-400 dark:text-dark-muted">{{ $poll->views_count }} vue{{ $poll->views_count !== 1 ? 's' : '' }}</span>
                         </div>
                         <h3 class="font-semibold text-gray-900 dark:text-dark-text mt-1">{{ $poll->title }}</h3>
                         @if($poll->description)
@@ -27,10 +28,10 @@
                     </div>
                     <div class="flex gap-2 ml-4">
                         <a href="{{ route('admin.polls.edit', $poll) }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Gérer</a>
-                        <form method="POST" action="{{ route('admin.polls.destroy', $poll) }}" onsubmit="return confirm('Supprimer ce sondage ?')">
+                        <form method="POST" action="{{ route('admin.polls.destroy', $poll) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium">Supprimer</button>
+                            <x-button type="submit" variant="danger" size="sm" loading-text="...">Supprimer</x-button>
                         </form>
                     </div>
                 </div>

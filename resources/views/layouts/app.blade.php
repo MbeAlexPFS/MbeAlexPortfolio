@@ -51,7 +51,7 @@
                                 @endif
                                 <form method="POST" action="{{ route('auth.logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-border">Déconnexion</button>
+                                    <x-button type="submit" variant="ghost" size="sm" class="block w-full text-left px-4 py-2">Déconnexion</x-button>
                                 </form>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                     @endif
                     <form method="POST" action="{{ route('auth.logout') }}">
                         @csrf
-                        <button class="block py-2 text-gray-600 dark:text-dark-muted hover:text-indigo-600 dark:hover:text-indigo-400">Déconnexion</button>
+                        <x-button type="submit" variant="ghost" size="sm" class="block py-2">Déconnexion</x-button>
                     </form>
                 @else
                     <a href="{{ route('auth.login') }}" class="block py-2 text-gray-600 dark:text-dark-muted hover:text-indigo-600 dark:hover:text-indigo-400">Connexion</a>

@@ -8,7 +8,7 @@
         <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text">Profil du site</h1>
         <p class="mt-1 text-gray-500 dark:text-dark-muted">Configurez les informations affichées sur la page d'accueil.</p>
 
-        <form method="POST" action="{{ route('admin.profile.update') }}" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+        <form method="POST" action="{{ route('admin.profile.update') }}" class="mt-8 space-y-5">
             @csrf
             @method('PUT')
 
@@ -52,9 +52,9 @@
                 @error('social_links') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <button type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+            <x-button type="submit" variant="primary" size="lg" loading-text="Enregistrement...">
                 Enregistrer
-            </button>
+            </x-button>
         </form>
     </div>
 @endsection

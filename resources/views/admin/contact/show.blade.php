@@ -20,10 +20,10 @@
 
         <div class="mt-6 flex gap-3">
             <a href="mailto:{{ $message->email }}" class="bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">Répondre</a>
-            <form method="POST" action="{{ route('admin.contact.destroy', $message) }}" onsubmit="return confirm('Supprimer ce message ?')">
+            <form method="POST" action="{{ route('admin.contact.destroy', $message) }}">
                 @csrf
                 @method('DELETE')
-                <button class="border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition">Supprimer</button>
+                <x-button type="submit" variant="danger" size="md" loading-text="...">Supprimer</x-button>
             </form>
         </div>
     </div>

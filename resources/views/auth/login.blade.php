@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-text text-center">Connexion</h1>
         <p class="mt-2 text-sm text-gray-500 dark:text-dark-muted text-center">Connectez-vous pour accéder à toutes les fonctionnalités.</p>
 
-        <form method="POST" action="{{ route('auth.login') }}" class="mt-8 space-y-5" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+        <form method="POST" action="{{ route('auth.login') }}" class="mt-8 space-y-5">
             @csrf
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 dark:text-dark-muted">Email</label>
@@ -27,9 +27,9 @@
                     Se souvenir de moi
                 </label>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 dark:bg-indigo-500 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm">
+            <x-button type="submit" variant="primary" size="lg" class="w-full" loading-text="Connexion...">
                 Se connecter
-            </button>
+            </x-button>
         </form>
 
         <div class="mt-6">

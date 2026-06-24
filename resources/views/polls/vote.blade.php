@@ -11,7 +11,7 @@
             <p class="mt-2 text-gray-500 dark:text-dark-muted">{{ $poll->description }}</p>
         @endif
 
-        <form method="POST" action="{{ route('polls.vote', $poll) }}" class="mt-10 space-y-8" x-on:submit="$el.querySelector('button[type=submit]').disabled = true">
+        <form method="POST" action="{{ route('polls.vote', $poll) }}" class="mt-10 space-y-8">
             @csrf
             @foreach($poll->questions as $question)
                 <div class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-xl p-6">
@@ -61,9 +61,9 @@
                 <p>&#9888; Une fois validées, vos réponses ne pourront pas être modifiées.</p>
             </div>
 
-            <button type="submit" class="w-full bg-indigo-600 dark:bg-indigo-500 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+            <x-button type="submit" variant="primary" size="lg" class="w-full py-3" loading-text="Envoi...">
                 Envoyer mes réponses
-            </button>
+            </x-button>
         </form>
     </div>
 @endsection

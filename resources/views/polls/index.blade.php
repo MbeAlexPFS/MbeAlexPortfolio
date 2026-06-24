@@ -16,6 +16,7 @@
                     @endif
                     <div class="mt-3 flex items-center gap-4 text-xs text-gray-400 dark:text-dark-muted">
                         <span>{{ $poll->questions_count }} question(s)</span>
+                        <span>{{ $poll->views_count }} vue{{ $poll->views_count !== 1 ? 's' : '' }}</span>
                         @if($poll->end_date)
                             <span>Fin : {{ $poll->end_date->format('d/m/Y') }}</span>
                         @endif
