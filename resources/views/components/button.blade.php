@@ -37,7 +37,7 @@
         x-bind:disabled="loading || {{ $disabled ? 'true' : 'false' }}"
         x-bind:class="(loading || {{ $disabled ? 'true' : 'false' }}) && 'opacity-50 cursor-not-allowed'">
     <span x-show="!loading">{{ $slot }}</span>
-    <span x-show="loading" class="inline-flex items-center gap-1.5" role="status">
+    <span x-show="loading" x-cloak class="inline-flex items-center gap-1.5" role="status">
         <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
