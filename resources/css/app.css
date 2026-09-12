@@ -1,0 +1,161 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-dark-bg: #0f172a;
+    --color-dark-card: #1e293b;
+    --color-dark-border: #334155;
+    --color-dark-text: #e2e8f0;
+    --color-dark-muted: #94a3b8;
+}
+
+@keyframes orb-slow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(120px, -80px) scale(1.1); }
+    50% { transform: translate(-60px, 120px) scale(0.9); }
+    75% { transform: translate(80px, -40px) scale(1.05); }
+}
+
+@keyframes orb-slow-reverse {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(-100px, 80px) scale(0.95); }
+    50% { transform: translate(80px, -100px) scale(1.1); }
+    75% { transform: translate(-40px, 60px) scale(1); }
+}
+
+@utility animate-orb-slow {
+    animation: orb-slow 25s ease-in-out infinite;
+}
+
+@utility animate-orb-slow-reverse {
+    animation: orb-slow-reverse 30s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@utility animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out both;
+}
+
+@utility animate-fade-in {
+    animation: fade-in 0.5s ease-out both;
+}
+
+@utility animate-scale-in {
+    animation: scale-in 0.3s ease-out both;
+}
+
+@utility delay-100 {
+    animation-delay: 100ms;
+}
+
+@utility delay-200 {
+    animation-delay: 200ms;
+}
+
+@utility delay-300 {
+    animation-delay: 300ms;
+}
+
+@utility delay-400 {
+    animation-delay: 400ms;
+}
+
+@utility delay-500 {
+    animation-delay: 500ms;
+}
+
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.prose h1 > a,
+.prose h2 > a,
+.prose h3 > a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.prose h1 > a:hover,
+.prose h2 > a:hover,
+.prose h3 > a:hover {
+    color: #4f46e5;
+}
+
+.dark .prose h1 > a:hover,
+.dark .prose h2 > a:hover,
+.dark .prose h3 > a:hover {
+    color: #818cf8;
+}
+
+.prose pre {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+.prose img {
+    border-radius: 0.75rem;
+}
+
+.prose blockquote {
+    border-left-color: #6366f1;
+    background-color: #f8fafc;
+    padding: 0.75rem 1rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.dark .prose blockquote {
+    background-color: #1e293b;
+    border-left-color: #818cf8;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+[x-cloak] {
+    display: none !important;
+}
