@@ -8,10 +8,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libzip-dev \
     unzip \
-    mariadb-server \
     && rm -rf /var/lib/apt/lists/*
-
-RUN mariadb-install-db --user=mysql --datadir=/var/lib/mysql 2>/dev/null || true
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
@@ -42,8 +39,7 @@ RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
 RUN mkdir -p storage/logs && \
     touch storage/logs/laravel.log && \
-    chmod -R a+w storage bootstrap/cache && \
-    touch database/database.sqlite && chmod a+w database/database.sqlite
+    chmod -R a+w storage bootstrap/cache
 
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
