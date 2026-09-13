@@ -37,6 +37,10 @@ RUN rm -rf bootstrap/cache/*.php && \
 
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
+RUN mkdir -p storage/logs && \
+    chmod -R a+w storage bootstrap/cache && \
+    touch database/database.sqlite && chmod a+w database/database.sqlite
+
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
