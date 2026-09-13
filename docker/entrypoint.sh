@@ -9,7 +9,11 @@ sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/" /etc/apache2/sites-availab
 
 php artisan storage:link --no-interaction 2>/dev/null || true
 
-php artisan migrate --force --no-interaction 2>/dev/null || true
+COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-progress || true
+
+php artisan migrate:fresh --force --no-interaction || true
+
+php artisan db:seed --force --no-interaction || true
 
 php-fpm -D
 
