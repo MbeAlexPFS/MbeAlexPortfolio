@@ -1,3 +1,10 @@
+## Git & Push — RÈGLE STRICTE
+
+- Ne JAMAIS exécuter `git push` sans autorisation explicite de l'utilisateur. C'est l'utilisateur qui déclenche tout envoi vers GitHub.
+- Ne pas non plus `git commit` ni `git add -A` automatiquement : le commiter régulier est fait par l'utilisateur ou sur demande explicite.
+- Toute modification de fichier doit rester locale et non poussée tant que l'utilisateur n'a pas donné son feu vert.
+- Si un envoi semble nécessaire, en faire la proposition en un message clair et attendre la confirmation.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
