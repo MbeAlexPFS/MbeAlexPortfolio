@@ -8,12 +8,12 @@ use App\Models\Project;
 use App\Models\Setting;
 use App\Models\Skill;
 use App\Models\User;
+use App\Services\ImageService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -57,15 +57,11 @@ class AdminController extends Controller
         $previous = $user->getRawOriginal('avatar_url');
 
         if ($request->hasFile('avatar')) {
-            if ($previous && str_starts_with($previous, 'avatars/')) {
-                Storage::disk('public')->delete($previous);
-            }
+            ImageService::delete($previous);
 
-            $data['avatar_url'] = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar_url'] = ImageService::upload($request->file('avatar'), 'avatars');
         } elseif ($request->boolean('remove_avatar')) {
-            if ($previous && str_starts_with($previous, 'avatars/')) {
-                Storage::disk('public')->delete($previous);
-            }
+            ImageService::delete($previous);
 
             $data['avatar_url'] = null;
         }

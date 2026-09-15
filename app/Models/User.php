@@ -35,7 +35,7 @@ class User extends Authenticatable
     public function avatarUrl(): Attribute
     {
         return Attribute::get(fn ($value) => $value
-            ? Storage::url($value)
+            ? (preg_match('~^(https?://|/storage/)~', $value) ? $value : Storage::url($value))
             : null);
     }
 

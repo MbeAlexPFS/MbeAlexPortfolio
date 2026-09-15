@@ -33,7 +33,7 @@
                         <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
                             class="block w-full text-sm text-gray-500 dark:text-dark-muted file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 dark:file:bg-indigo-900/30 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-900/50 transition">
                         @error('image') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
-                        @if(isset($project) && $project->image_url && str_starts_with($project->image_url, '/storage/'))
+                        @if(isset($project) && $project->image_url)
                             <div class="mt-2">
                                 @if(preg_match('/\.(mp4|webm|mov|ogg)$/i', $project->image_url))
                                     <video src="{{ $project->image_url }}" class="w-24 h-16 rounded object-cover" muted></video>

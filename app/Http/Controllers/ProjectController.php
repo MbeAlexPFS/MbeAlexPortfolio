@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Skill;
 use App\Models\Tag;
 use App\Services\GitHubService;
+use App\Services\ImageService;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -78,9 +78,7 @@ class ProjectController extends Controller
         $data['type'] = 'web_static';
 
         if ($request->hasFile('image')) {
-            $data['image_url'] = Storage::url(
-                $request->file('image')->store('projects', 'public'),
-            );
+            $data['image_url'] = ImageService::upload($request->file('image'), 'projects');
         }
 
         $project = Project::create($data);
@@ -130,17 +128,9 @@ class ProjectController extends Controller
         $data['type'] = 'web_static';
 
         if ($request->hasFile('image')) {
-            if (
-                $project->image_url &&
-                str_starts_with($project->image_url, '/storage/projects/')
-            ) {
-                $oldPath = str_replace('/storage/', '', $project->image_url);
-                Storage::disk('public')->delete($oldPath);
-            }
+            ImageService::delete($project->image_url);
 
-            $data['image_url'] = Storage::url(
-                $request->file('image')->store('projects', 'public'),
-            );
+            $data['image_url'] = ImageService::upload($request->file('image'), 'projects');
         }
 
         $project->update($data);
@@ -156,13 +146,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project): RedirectResponse
     {
-        if (
-            $project->image_url &&
-            str_starts_with($project->image_url, '/storage/projects/')
-        ) {
-            $oldPath = str_replace('/storage/', '', $project->image_url);
-            Storage::disk('public')->delete($oldPath);
-        }
+        ImageService::delete($project->image_url);
 
         $project->delete();
 
@@ -400,17 +384,12 @@ class ProjectController extends Controller
             return back()->with('error', 'Échec de la génération de la miniature.');
         }
 
-        $filename = $project->id.'_thumbnail.png';
+        $imageUrl = ImageService::uploadContents($response->body(), 'projects');
 
-        Storage::disk('public')->put('projects/'.$filename, $response->body());
-
-        if ($project->image_url && str_starts_with($project->image_url, '/storage/projects/')) {
-            $oldPath = str_replace('/storage/', '', $project->image_url);
-            Storage::disk('public')->delete($oldPath);
-        }
+        ImageService::delete($project->image_url);
 
         $project->update([
-            'image_url' => Storage::url('projects/'.$filename),
+            'image_url' => $imageUrl,
             'thumbnail_status' => 'completed',
         ]);
 

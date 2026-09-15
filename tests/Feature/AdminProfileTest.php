@@ -47,8 +47,8 @@ class AdminProfileTest extends TestCase
         $user = $admin->fresh();
 
         $this->assertNotNull($user->avatar_url);
-        Storage::disk('public')->assertExists($user->getRawOriginal('avatar_url'));
-        $this->assertStringStartsWith('avatars/', $user->getRawOriginal('avatar_url'));
+        Storage::disk('public')->assertExists(str_replace('/storage/', '', $user->getRawOriginal('avatar_url')));
+        $this->assertStringStartsWith('/storage/avatars/', $user->getRawOriginal('avatar_url'));
     }
 
     public function test_new_avatar_replaces_previous_file_on_disk(): void
