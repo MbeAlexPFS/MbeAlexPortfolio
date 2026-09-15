@@ -7,12 +7,15 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     libzip-dev \
+    libpq-dev \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     pdo_mysql \
+    pgsql \
+    pdo_pgsql \
     gd \
     zip
 
