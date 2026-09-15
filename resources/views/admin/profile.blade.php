@@ -8,9 +8,28 @@
         <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-dark-text">Profil du site</h1>
         <p class="mt-1 text-gray-500 dark:text-dark-muted">Configurez les informations affichées sur la page d'accueil.</p>
 
-        <form method="POST" action="{{ route('admin.profile.update') }}" class="mt-8 space-y-5">
+        <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data" class="mt-8 space-y-5">
             @csrf
             @method('PUT')
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-text">Photo de profil</label>
+                <div class="mt-2 flex items-center gap-6">
+                    <div id="avatar-current">
+                        <x-avatar :user="$user" size="2xl" />
+                    </div>
+                    <img id="avatar-preview" src="" alt="Aperçu" class="hidden w-32 h-32 rounded-full object-cover flex-shrink-0">
+                    <div class="space-y-3">
+                        <input type="file" name="avatar" id="avatar" accept="image/jpeg,image/png,image/gif,image/webp"
+                            class="block w-full text-sm text-gray-500 dark:text-dark-muted cursor-pointer">
+                        @error('avatar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-dark-muted cursor-pointer">
+                            <input type="checkbox" name="remove_avatar" value="1">
+                            Retirer la photo actuelle
+                        </label>
+                    </div>
+                </div>
+            </div>
 
             <div>
                 <label for="headline" class="block text-sm font-medium text-gray-700 dark:text-dark-text">Titre / Accroche</label>
@@ -61,6 +80,24 @@
 
 @push('scripts')
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('avatar');
+        const preview = document.getElementById('avatar-preview');
+        const current = document.getElementById('avatar-current');
+
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                preview.src = event.target.result;
+                preview.classList.remove('hidden');
+                current.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
     function socialLinks() {
         const initial = @json(old('social_links', $user->social_links ?? []));
         return {

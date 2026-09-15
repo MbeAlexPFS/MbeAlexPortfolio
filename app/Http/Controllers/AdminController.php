@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -48,9 +49,30 @@ class AdminController extends Controller
             'social_links' => ['nullable', 'array', 'max:10'],
             'social_links.*.platform' => ['required', 'string', 'max:50'],
             'social_links.*.url' => ['required', 'url', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:2048'],
+            'remove_avatar' => ['nullable', 'boolean'],
         ]);
 
-        Auth::user()->update($data);
+        $user = Auth::user();
+        $previous = $user->getRawOriginal('avatar_url');
+
+        if ($request->hasFile('avatar')) {
+            if ($previous && str_starts_with($previous, 'avatars/')) {
+                Storage::disk('public')->delete($previous);
+            }
+
+            $data['avatar_url'] = $request->file('avatar')->store('avatars', 'public');
+        } elseif ($request->boolean('remove_avatar')) {
+            if ($previous && str_starts_with($previous, 'avatars/')) {
+                Storage::disk('public')->delete($previous);
+            }
+
+            $data['avatar_url'] = null;
+        }
+
+        unset($data['avatar'], $data['remove_avatar']);
+
+        $user->update($data);
 
         return to_route('admin.profile.edit')->with('success', 'Profil mis à jour.');
     }
