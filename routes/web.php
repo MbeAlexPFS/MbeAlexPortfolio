@@ -15,8 +15,6 @@ Route::get('/', HomeController::class)->name('home');
 
 Route::get('/projets', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projets/{project}', [ProjectController::class, 'show'])->name('projects.show');
-Route::get('/projets/{project}/rendu', [ProjectController::class, 'preview'])->name('projects.preview');
-Route::get('/projets/{project}/rendu/proxy', [ProjectController::class, 'proxyContent'])->name('projects.preview.proxy');
 
 Route::get('/competences', [SkillController::class, 'index'])->name('skills.index');
 

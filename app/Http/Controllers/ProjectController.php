@@ -12,8 +12,6 @@ use Illuminate\Http\Client\Pool;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -294,7 +292,6 @@ class ProjectController extends Controller
                     continue;
                 }
 
-                $defaultBranch = $repo['default_branch'] ?? 'main';
                 $description = $repo['description'] ?? '';
 
                 if ($description === '') {
@@ -310,7 +307,7 @@ class ProjectController extends Controller
                     'description' => $description,
                     'type' => 'web_static',
                     'github_url' => $repo['html_url'],
-                    'live_url' => 'https://htmlpreview.github.io/?https://github.com/'.$fullName.'/blob/'.$defaultBranch.'/index.html',
+                    'live_url' => $this->githubPagesUrl($fullName),
                     'github_repo_id' => $repoId,
                 ];
 
@@ -355,13 +352,6 @@ class ProjectController extends Controller
             'percentage' => $progress->percentage(),
             'error' => $progress->error,
         ]);
-    }
-
-    public function preview(Project $project): View
-    {
-        abort_unless($project->live_url && $project->github_url, 404);
-
-        return view('projects.preview', compact('project'));
     }
 
     public function generateThumbnail(Project $project): RedirectResponse
@@ -417,218 +407,14 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function proxyContent(Project $project, Request $request): Response
+    private function githubPagesUrl(string $fullName): string
     {
-        abort_unless($project->live_url && $project->github_url, 404);
+        [$owner, $repo] = explode('/', $fullName, 2);
 
-        $file = $request->query('file', 'index.html');
-        $cacheKey = 'project_proxy_'.md5("{$project->id}_{$file}");
-
-        $html = Cache::get($cacheKey);
-
-        if ($html === null) {
-            $fullName = trim(parse_url($project->github_url, PHP_URL_PATH) ?? '', '/');
-            $branch = $this->extractBranch($project);
-
-            $file = ltrim($file, './');
-
-            $sourceUrl = "https://raw.githubusercontent.com/{$fullName}/{$branch}/{$file}";
-
-            $response = Http::timeout(15)->get($sourceUrl);
-
-            if ($response->failed()) {
-                abort(502, 'Impossible de récupérer le contenu depuis GitHub.');
-            }
-
-            $html = $response->body();
-
-            $rawBase = "https://raw.githubusercontent.com/{$fullName}/{$branch}/";
-            $githubBlobBase = "https://github.com/{$fullName}/blob/{$branch}/";
-            $htmlpreviewBase = "https://htmlpreview.github.io/?https://github.com/{$fullName}/blob/{$branch}/";
-
-            $html = $this->inlineCssLinks($html, $rawBase, $githubBlobBase);
-            $html = $this->inlineScripts($html, $rawBase);
-            $html = $this->rewriteImages($html, $githubBlobBase);
-            $html = $this->rewriteAnchors($html, $project, $htmlpreviewBase);
-            $html = $this->rewriteCssUrlsInHtml($html, $githubBlobBase);
-
-            Cache::put($cacheKey, $html, 300);
+        if (str_ends_with($repo, '.github.io')) {
+            return 'https://'.$repo.'/';
         }
 
-        return response($html, 200, ['Content-Type' => 'text/html; charset=utf-8']);
-    }
-
-    private function inlineCssLinks(string $html, string $rawBase, string $githubBlobBase): string
-    {
-        return preg_replace_callback(
-            '/<link\s[^>]*?\brel\s*=\s*["\']stylesheet["\'][^>]*?\bhref\s*=\s*["\']([^"\']+)["\'][^>]*>/i',
-            function (array $m) use ($rawBase, $githubBlobBase) {
-                $href = $m[1];
-
-                if (preg_match('/^(https?:|data:|#|\/\/)/i', $href)) {
-                    return $m[0];
-                }
-
-                if (str_contains($href, 'htmlpreview.github.io')) {
-                    return $m[0];
-                }
-
-                $path = ltrim($href, './');
-                $cssUrl = $rawBase.$path;
-
-                $response = Http::timeout(10)->get($cssUrl);
-
-                if ($response->failed()) {
-                    return $m[0];
-                }
-
-                $css = $response->body();
-
-                $cssDir = dirname($path);
-                $cssBase = $cssDir !== '.' ? $githubBlobBase.$cssDir.'/' : $githubBlobBase;
-
-                $css = preg_replace_callback(
-                    '/url\(\s*["\']?([^"\'\)\s]+)["\']?\s*\)/i',
-                    function (array $m) use ($cssBase) {
-                        $url = $m[1];
-
-                        if (preg_match('/^(https?:|data:|#|\/\/)/i', $url)) {
-                            return $m[0];
-                        }
-
-                        return str_replace($url, $cssBase.$url.'?raw=true', $m[0]);
-                    },
-                    $css,
-                );
-
-                return '<style>'.$css.'</style>';
-            },
-            $html,
-        );
-    }
-
-    private function inlineScripts(string $html, string $rawBase): string
-    {
-        return preg_replace_callback(
-            '/<script\s[^>]*?\bsrc\s*=\s*["\']([^"\']+)["\'][^>]*><\/script>/i',
-            function (array $m) use ($rawBase) {
-                $src = $m[1];
-
-                if (preg_match('/^(https?:|data:|#|\/\/)/i', $src)) {
-                    return $m[0];
-                }
-
-                if (str_contains($src, 'htmlpreview.github.io')) {
-                    return $m[0];
-                }
-
-                $path = ltrim($src, './');
-                $jsUrl = $rawBase.$path;
-
-                $response = Http::timeout(10)->get($jsUrl);
-
-                if ($response->failed()) {
-                    return $m[0];
-                }
-
-                $js = $response->body();
-
-                return '<script>'.$js.'</script>';
-            },
-            $html,
-        );
-    }
-
-    private function rewriteImages(string $html, string $githubBlobBase): string
-    {
-        return preg_replace_callback(
-            '/<img\s[^>]*?\bsrc\s*=\s*["\']([^"\']+)["\'][^>]*>/i',
-            function (array $m) use ($githubBlobBase) {
-                $full = $m[0];
-                $src = $m[1];
-
-                if (preg_match('/^(https?:|data:|#|\/\/)/i', $src)) {
-                    return $full;
-                }
-
-                if (str_contains($src, 'github.com') || str_contains($src, 'htmlpreview.github.io')) {
-                    return $full;
-                }
-
-                $path = ltrim($src, './');
-                $newSrc = $githubBlobBase.$path.'?raw=true';
-
-                return str_replace('src="'.$src.'"', 'src="'.$newSrc.'"', $full);
-            },
-            $html,
-        );
-    }
-
-    private function rewriteAnchors(string $html, Project $project, string $htmlpreviewBase): string
-    {
-        $previewRoute = route('projects.preview.proxy', $project);
-
-        return preg_replace_callback(
-            '/<a\s[^>]*?\bhref\s*=\s*["\']([^"\']+)["\'][^>]*>/i',
-            function (array $m) use ($previewRoute) {
-                $full = $m[0];
-                $href = $m[1];
-
-                if (preg_match('/^(https?:|mailto:|tel:|#|\/\/)/i', $href)) {
-                    return $full;
-                }
-
-                if (str_contains($href, 'htmlpreview.github.io')) {
-                    return $full;
-                }
-
-                if (preg_match('/\.(css|js|json|xml)$/i', $href)) {
-                    return $full;
-                }
-
-                $path = ltrim($href, './');
-
-                $newHref = $previewRoute.'?file='.urlencode($path);
-
-                return str_replace('href="'.$href.'"', 'href="'.$newHref.'"', $full);
-            },
-            $html,
-        );
-    }
-
-    private function rewriteCssUrlsInHtml(string $html, string $githubBlobBase): string
-    {
-        return preg_replace_callback(
-            '/url\(\s*["\']?([^"\'\)\s]+)["\']?\s*\)/i',
-            function (array $m) use ($githubBlobBase) {
-                $url = $m[1];
-
-                if (preg_match('/^(https?:|data:|#|\/\/)/i', $url)) {
-                    return $m[0];
-                }
-
-                if (str_contains($url, 'github.com') || str_contains($url, 'htmlpreview.github.io')) {
-                    return $m[0];
-                }
-
-                return str_replace($url, $githubBlobBase.$url.'?raw=true', $m[0]);
-            },
-            $html,
-        );
-    }
-
-    private function extractBranch(Project $project): string
-    {
-        $innerUrl = str_replace('https://htmlpreview.github.io/?', '', $project->live_url);
-
-        if (preg_match('#/(?:blob|raw)/([^/]+)/#', $innerUrl, $m)) {
-            return $m[1];
-        }
-
-        if (preg_match('#^https?://raw\.githubusercontent\.com/[^/]+/[^/]+/([^/]+)/#', $innerUrl, $m)) {
-            return $m[1];
-        }
-
-        return 'main';
+        return 'https://'.$owner.'.github.io/'.$repo.'/';
     }
 }

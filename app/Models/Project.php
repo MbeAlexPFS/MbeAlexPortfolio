@@ -25,4 +25,25 @@ class Project extends Model
     {
         return $this->belongsToMany(Tag::class);
     }
+
+    public function getGithubPagesUrlAttribute(): ?string
+    {
+        if (empty($this->github_url)) {
+            return $this->live_url;
+        }
+
+        $path = trim(parse_url($this->github_url, PHP_URL_PATH) ?? '', '/');
+
+        if ($path === '') {
+            return $this->live_url;
+        }
+
+        [$owner, $repo] = explode('/', $path, 2);
+
+        if (str_ends_with($repo, '.github.io')) {
+            return 'https://'.$repo.'/';
+        }
+
+        return 'https://'.$owner.'.github.io/'.$repo.'/';
+    }
 }

@@ -35,8 +35,8 @@
                         <p class="text-sm text-gray-500 dark:text-dark-muted">{{ Str::limit($project->description, 100) }}</p>
                     </div>
                     <div class="flex gap-2 ml-4 items-center">
-                        @if($project->type === 'web_static' && $project->live_url && $project->github_url)
-                            <a href="{{ route('projects.preview', $project) }}" class="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">Aperçu</a>
+                        @if($project->type === 'web_static' && $project->live_url)
+                            <a href="{{ $project->github_pages_url }}" target="_blank" class="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium">Aperçu</a>
                             <template x-if="thumbStatus === 'pending' || thumbStatus === 'processing'">
                                 <span class="text-sm text-amber-500 animate-pulse flex items-center gap-2">
                                     Miniature...
