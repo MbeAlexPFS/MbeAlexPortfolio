@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\JobProgress;
 use App\Models\Project;
 use App\Models\Skill;
-use App\Models\Tag;
 use App\Services\GitHubService;
 use App\Services\ImageService;
 use Illuminate\Http\Client\Pool;
@@ -20,7 +19,7 @@ class ProjectController extends Controller
 {
     public function index(): View
     {
-        $projects = Project::with(['skills', 'tags'])
+        $projects = Project::with(['skills'])
             ->where('type', 'web_static')
             ->latest('created_at')
             ->paginate(12);
@@ -31,13 +30,13 @@ class ProjectController extends Controller
     public function show(Project $project): View
     {
         return view('projects.show', [
-            'project' => $project->load(['skills', 'tags']),
+            'project' => $project->load(['skills']),
         ]);
     }
 
     public function adminIndex(): View
     {
-        $projects = Project::with(['skills', 'tags'])
+        $projects = Project::with(['skills'])
             ->where('type', 'web_static')
             ->latest('created_at')
             ->paginate(20);
@@ -48,9 +47,8 @@ class ProjectController extends Controller
     public function create(): View
     {
         $skills = Skill::all();
-        $tags = Tag::all();
 
-        return view('admin.projects.form', compact('skills', 'tags'));
+        return view('admin.projects.form', compact('skills'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -69,8 +67,6 @@ class ProjectController extends Controller
             'live_url' => ['nullable', 'url', 'max:2048'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['exists:skills,id'],
-            'tags' => ['nullable', 'array'],
-            'tags.*' => ['exists:tags,id'],
         ]);
 
         $data['type'] = 'web_static';
@@ -84,9 +80,6 @@ class ProjectController extends Controller
         if (! empty($data['skills'])) {
             $project->skills()->attach($data['skills']);
         }
-        if (! empty($data['tags'])) {
-            $project->tags()->attach($data['tags']);
-        }
 
         return to_route('admin.projects.index')->with(
             'success',
@@ -96,11 +89,10 @@ class ProjectController extends Controller
 
     public function edit(Project $project): View
     {
-        $project->load(['skills', 'tags']);
+        $project->load(['skills']);
         $skills = Skill::all();
-        $tags = Tag::all();
 
-        return view('admin.projects.form', compact('project', 'skills', 'tags'));
+        return view('admin.projects.form', compact('project', 'skills'));
     }
 
     public function update(Request $request, Project $project): RedirectResponse
@@ -119,8 +111,6 @@ class ProjectController extends Controller
             'live_url' => ['nullable', 'url', 'max:2048'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['exists:skills,id'],
-            'tags' => ['nullable', 'array'],
-            'tags.*' => ['exists:tags,id'],
         ]);
 
         $data['type'] = 'web_static';
@@ -134,7 +124,6 @@ class ProjectController extends Controller
         $project->update($data);
 
         $project->skills()->sync($data['skills'] ?? []);
-        $project->tags()->sync($data['tags'] ?? []);
 
         return to_route('admin.projects.index')->with(
             'success',

@@ -81,20 +81,6 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-dark-text">Tags</label>
-                <div class="mt-2 flex flex-wrap gap-2">
-                    @foreach($tags as $tag)
-                        <label class="flex items-center gap-1.5 text-sm text-gray-600 dark:text-dark-muted">
-                            <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
-                                {{ isset($project) && $project->tags->contains($tag->id) ? 'checked' : '' }}
-                                class="rounded border-gray-300 dark:border-dark-border text-indigo-600 focus:ring-indigo-500">
-                            {{ $tag->name }}
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
             <div class="flex items-center gap-3"
                  @if(isset($project))
                  x-data="{

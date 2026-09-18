@@ -46,17 +46,6 @@
                     </div>
                 </div>
             @endif
-
-            @if($project->tags->isNotEmpty())
-                <div class="mt-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text">Tags</h2>
-                    <div class="mt-3 flex flex-wrap gap-2">
-                        @foreach($project->tags as $tag)
-                            <span class="bg-gray-100 dark:bg-dark-border text-gray-600 dark:text-dark-muted text-sm px-3 py-1 rounded-full">{{ $tag->name }}</span>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 @endsection

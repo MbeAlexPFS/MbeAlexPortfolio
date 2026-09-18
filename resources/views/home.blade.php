@@ -138,13 +138,6 @@
                             <div class="p-5">
                                 <h3 class="mt-1 font-semibold text-gray-900 dark:text-dark-text group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">{{ $project->title }}</h3>
                                 <p class="mt-2 text-sm text-gray-500 dark:text-dark-muted line-clamp-2">{{ Str::limit($project->description, 120) }}</p>
-                                @if($project->tags->isNotEmpty())
-                                    <div class="mt-3 flex flex-wrap gap-1.5">
-                                        @foreach($project->tags as $tag)
-                                            <span class="text-xs bg-gray-100 dark:bg-dark-border text-gray-600 dark:text-dark-muted px-2 py-0.5 rounded">{{ $tag->name }}</span>
-                                        @endforeach
-                                    </div>
-                                @endif
                             </div>
                         </a>
                     @endforeach

@@ -64,13 +64,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('article_tag', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('article_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
-        });
-
-        Schema::create('comments', function (Blueprint $table) {
+Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('article_id')->constrained()->cascadeOnDelete();

@@ -12,7 +12,7 @@ class HomeController extends Controller
 {
     public function __invoke(): View
     {
-        $projects = Project::with(['skills', 'tags'])
+        $projects = Project::with(['skills'])
             ->where('type', 'web_static')
             ->latest('created_at')
             ->take(6)

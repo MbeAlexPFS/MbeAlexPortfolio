@@ -21,11 +21,6 @@ class Project extends Model
         return $this->belongsToMany(Skill::class);
     }
 
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-
     public function getGithubPagesUrlAttribute(): ?string
     {
         if (empty($this->github_url)) {
