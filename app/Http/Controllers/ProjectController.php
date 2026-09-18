@@ -353,9 +353,11 @@ class ProjectController extends Controller
 
         $project->update(['thumbnail_status' => 'processing']);
 
-        $screenshotUrl = 'https://mini.s-shot.ru/1280x1024/PNG/1024/?'.urlencode($project->live_url);
-
-        $response = Http::timeout(30)->get($screenshotUrl);
+        $response = Http::withHeaders([
+            'X-API-Key' => config('services.snap_render.api_key'),
+        ])->timeout(30)->get('https://app.snap-render.com/v1/screenshot', [
+            'url' => $project->live_url,
+        ]);
 
         if ($response->failed()) {
             $project->update(['thumbnail_status' => 'failed']);
